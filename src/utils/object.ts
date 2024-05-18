@@ -1,0 +1,1 @@
+export enum typeObject {FILE='FILE',FOLDER='FOLDER'}
