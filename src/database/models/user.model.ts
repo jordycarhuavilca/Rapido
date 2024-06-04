@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { gender } from '@utils/user';
+import { gender } from '../../utils/user';
 const { Schema } = mongoose;
 
 interface user {

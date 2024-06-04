@@ -1,11 +1,27 @@
-import { Router} from "express";
-import objectController from "../controllers/object.controller.js";
-import multer from "multer";
-const storage = multer.memoryStorage()
-const upload = multer({ storage: storage, preservePath : true })
+import { Router } from 'express';
+import objectController from '../controllers/object.controller';
+import multer from 'multer';
+import { body } from 'express-validator';
+import { typeObject } from '../utils/object';
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage, preservePath: true });
+const { FOLDER } = typeObject;
+const router = Router();
 
-const router = Router()
+// router.post(
+//   '/upload/:userId',
+//   [upload.array('object', 12), body()],
+//   objectController.addObject
+// );
 
-router.post('/upload/:userId',upload.array('object',12),objectController.addObject)
-router.post('/upload/:userId/subObject',upload.array('object',12),objectController.addSubObjects)
-export default router
+router.post(
+  '/upload/subObject',
+  [
+    upload.array('object', 12),
+    body('folder').optional().isArray().withMessage('folder must be an Array'),
+    body('userId', 'userId must not be empty').exists().notEmpty(),
+    body('root').exists().notEmpty().withMessage('folderRoot must not be empty')
+  ],
+  objectController.addSubObjects
+);
+export default router;

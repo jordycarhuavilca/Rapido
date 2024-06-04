@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import {ValidateError , InternalServerError} from './errorHandler.js'
+import {ValidateError , InternalServerError} from './errorHandler'
 const handleAysncError = {
     run: async (promise)=>{
         try {

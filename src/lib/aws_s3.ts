@@ -1,5 +1,5 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import fileInterface from '@interfaces/file.interface'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { file } from '@interfaces/file/file.interface';
 
 const s3Service = {
   send: async (file: any) => {
@@ -38,4 +38,4 @@ const s3Service = {
     }
   }
 };
-export default s3Service
+export default s3Service;

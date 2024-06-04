@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import session from 'express-session';
-import router from '@routes/index';
+import router from './routes/index';
 import cors from 'cors';
 import multer from 'multer';
 import { Request, Response, NextFunction } from 'express';

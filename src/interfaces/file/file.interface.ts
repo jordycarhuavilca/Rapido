@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-interface file {
+export interface file {
   id?: uuidv4;
   name: string;
   size: string;
@@ -12,4 +12,3 @@ interface file {
   ext: string;
   userId: string;
 }
-export default file;

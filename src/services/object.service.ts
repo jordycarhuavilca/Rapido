@@ -1,20 +1,17 @@
-import objectModel from '../database/models/object.model.js';
-import objectRepository from '../repos/object.repos.js';
-import handleAysncErr from '../helpers/handleAsyncError.js';
-import objectHelper from '../helpers/object.helper.js';
-import aws_s3 from '../lib/aws_s3.js';
+import objectModel from '../database/models/object.model';
+import objectHelper from '../helpers/object.helper';
+import aws_s3 from '../lib/aws_s3';
 import { v4 as uuidv4 } from 'uuid';
-import { ValidateError } from '../helpers/errorHandler.js';
+import { ValidateError } from '../helpers/errorHandler';
 import path from 'path';
 
-const objectRepos = new objectRepository(objectModel);
 
 class objectServ {
   _addIdToFolder(obj, userId) {
     const data = {};
     obj.id = uuidv4();
     obj.userId = userId;
-    data.data = obj;
+    // data.data = obj;
     return data;
   }
   async _addObject(listObj, objectType, userId) {
@@ -24,12 +21,12 @@ class objectServ {
         if (objectType == 'folder') {
           obj.location = 'myHB';
           const data = this._addIdToFolder(obj, userId);
-          return await handleAysncErr.run(objectRepos.addObject(data));
+          return await objectModel.create(data);
         }
 
-        await aws_s3.send(obj, userId).then(async (data) => {
-          if (data) res = await handleAysncErr.run(objectRepos.addObject(data));
-        });
+        // await aws_s3.send(obj, userId).then(async (data) => {
+        //   if (data) res = await objectModel.create(data)
+        // });
 
         return res;
       })
@@ -44,7 +41,7 @@ class objectServ {
     const objectType = listObj[0].type ? 'folder' : 'file';
     const objects = await this.getObjects(userId);
 
-    if (objects.length == 0)
+    if (!objects)
       return await this._addObject(listObj, objectType, userId);
 
     let hashFileName = {};
@@ -83,7 +80,7 @@ class objectServ {
     //solo el folder tiene el campo type cuando viene del controller
 
     const objects = await this.getObjects(userId);
-    const folderFound = objects.find(
+    const folderFound = objects?.find(
       (obj) => obj.data.name == listPathNames[0] && obj.data.type === 'folder'
     ).data;
 
@@ -101,7 +98,7 @@ class objectServ {
       return [];
     }
 
-    const listObjAdded = await handleAysncErr.run(
+    const listObjAdded = 
       await Promise.all(
         listObj.map(async (file) => {
           let name = listPathNames[listPathNames.length - 1];
@@ -122,7 +119,6 @@ class objectServ {
           }
         })
       )
-    );
     const updatedFolder = objectHelper.insertObjectsToFolder(
       folderFound,
       listPathNames,
@@ -130,13 +126,11 @@ class objectServ {
       limit
     );
 
-    return await objectRepos.updateFolder(updatedFolder);
+    return await objectModel.findByIdAndUpdate(updatedFolder)
   }
 
-  async getObjects(userId) {
-    const data = await handleAysncErr.run(
-      objectRepos.getObjects({ 'data.userId': userId })
-    );
+  async getObjects(userId : string): Promise<any[] | null> {
+    const data = await objectModel.find({ 'data.userId': userId }).exec()
     return data;
   }
 }

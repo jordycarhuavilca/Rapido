@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es2016" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "target": "es2016",
     "module": "commonjs" /* Specify what module code is generated. */,
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
-    "outDir": "dir",
+    "outDir": "dist",
     "baseUrl": "./src",
     "experimentalDecorators": true,
     "paths": {
       "@interfaces/*": ["interfaces/*"],
-       "@models/*": ["database/models/*"],
-       "@utils/*": ["utils/*"]
+      "@models/*": ["database/models/*"],
+      "@utils/*": ["utils/*"],
+      "@/*": ["src/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/@types"],
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
@@ -21,5 +22,5 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "noUnusedParameters": false
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*","src/database/migrations/**/*"]
 }
