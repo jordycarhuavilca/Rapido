@@ -10,20 +10,11 @@ import { Readable } from 'node:stream';
 import S3Service from '@lib/s3Service';
 
 class objectServ {
-  private _addIdToFolder(obj, userId) {
-    const data = {};
-    obj.id = uuidv4();
-    obj.userId = userId;
-
-    // data.data = obj;
-    return data;
-  }
-  // agrega todo tipo de objectos en un folder elegido
+  
   async addSubObjects(data: IaddSubObjects) {
     console.log(`addSubObjects.init`, data);
     const { files = [], root = null, userId, folder } = data;
     const updatedFolder = { value: {} };
-    //solo el folder tiene el campo type cuando viene del controller
 
     const res: Folder | null = await this.getFolderRootByUserId(userId);
     if (!res?.idValue)
@@ -95,62 +86,6 @@ class objectServ {
       { new: true }
     );
   }
-  // async _addObject(listObj, objectType, userId) {
-  //   let res = {};
-  //   return await Promise.all(
-  //     listObj.map(async (obj) => {
-  //       if (objectType == 'folder') {
-  //         obj.location = 'myHB';
-  //         const data = this._addIdToFolder(obj, userId);
-  //         return await objectModel.create(data);
-  //       }
-
-  //       // await aws_s3.send(obj, userId).then(async (data) => {
-  //       //   if (data) res = await objectModel.create(data)
-  //       // });
-
-  //       return res;
-  //     })
-  //   ).catch(() => {
-  //     return [];
-  //   });
-  // }
-
-  // // proceso de crear un folder y objetos en el inicio
-  // async addObject(listObj, userId) {
-  //   //cuando los objectos son de tipo file no contienen el campo type
-  //   const objectType = listObj[0].type ? 'folder' : 'file';
-  //   const objects = await this.getObjects(userId);
-
-  //   if (!objects) return await this._addObject(listObj, objectType, userId);
-
-  //   let hashFileName = {};
-
-  //   for (const obj of listObj) {
-  //     if (objectType == 'file') {
-  //       let splited = obj.originalname.split('/');
-  //       let name = splited[splited.length - 1];
-  //       hashFileName[name] = name;
-  //     } else hashFileName[obj.name] = obj.name;
-  //   }
-
-  //   const oneTypeObjects = objects.filter((obj) => obj.data.type == objectType);
-
-  //   if (oneTypeObjects.length == 0)
-  //     return await this._addObject(listObj, objectType, userId);
-
-  //   let objRepeated =
-  //     oneTypeObjects.filter(
-  //       (obj) => hashFileName[obj.data.name] == obj.data.name
-  //     ) || [];
-
-  //   if (objRepeated.length > 0)
-  //     throw new ValidateError(
-  //       `ONE TYPE OBJECT'S NAME MUST BE UNIQUE IN THE SAME DIRECTORY`,
-  //       422
-  //     );
-  //   else return await this._addObject(listObj, objectType, userId);
-  // }
 
   async getFolderRootByUserId(id: string): Promise<Folder | null> {
     const data = (await folderModel.findOne({ userId: id }).exec()) as any;
@@ -187,8 +122,3 @@ class objectServ {
 }
 
 export default new objectServ();
-
-// const obb = new objectServ()
-// const updatedFolder =await obb.addSubFolder('934931/9349344/934935/934938',{message : 'you really did it'})
-
-// console.log(JSON.stringify(updatedFolder))
