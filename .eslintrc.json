@@ -25,9 +25,14 @@
           "module-resolve",
           {
             "alias": {
-              "@interfaces": ["interfaces/*"],
-              "@models": ["database/models/*"],
-              "@utils": ["utils/*"]
+              "@interfaces/*": ["interfaces/*"],
+              "@models/*": ["database/models/*"],
+              "@utils/*": ["utils/*"],
+              "@helper/*": ["helper/*"],
+              "@lib/*": ["lib/*"],
+              "@entities/*": ["entities/*"],
+              "@config/*": ["config/*"],
+              "@/*": ["src/*"]
             }
           }
         ]

@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "node ./dist/index.js",
-    "dev": "ts-node-dev ./src/index.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register ./src/index.ts",
     "build": "tsc",
     "migrate:up": "cross-env MIGRATION_DIR=./dist/database/migrations MIGRATION_EXTENSION=.js npm run build && migrate-mongo up"
   },
@@ -14,7 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.588.0",
-    "aws-sdk": "^2.1633.0",
+    "@aws-sdk/lib-storage": "^3.609.0",
+    "@smithy/types": "^3.3.0",
+    "aws-sdk": "^2.1658.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
