@@ -1,17 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "ES6",
     "module": "commonjs" /* Specify what module code is generated. */,
-    "rootDir": "./src" /* Specify the root folder within your source files. */,
+    "rootDir": "." /* Specify the root folder within your source files. */,
     "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
     "outDir": "dist",
     "baseUrl": "./src",
     "experimentalDecorators": true,
+    "sourceMap": true,
+    // "allowUnreachableCode": true,
     "paths": {
       "@interfaces/*": ["interfaces/*"],
       "@models/*": ["database/models/*"],
       "@utils/*": ["utils/*"],
-      "@/*": ["src/*"]
+      "@helper/*": ["helper/*"],
+      "@lib/*": ["lib/*"],
+      "@entities/*": ["entities/*"],
+      "@config/*": ["config/*"],
     },
     "typeRoots": ["./node_modules/@types", "./src/@types"],
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
@@ -22,5 +27,6 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "noUnusedParameters": false
   },
-  "include": ["src/**/*","src/database/migrations/**/*"]
+  "include": ["src/**/*.ts"]
 }
+// , "src/database/migrations/**/*"
