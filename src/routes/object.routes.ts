@@ -5,7 +5,6 @@ import { body } from 'express-validator';
 import { typeObject } from '../utils/object';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage, preservePath: true });
-const { FOLDER } = typeObject;
 const router = Router();
 
 // router.post(
@@ -17,8 +16,8 @@ const router = Router();
 router.post(
   '/upload/subObject',
   [
-    upload.array('object', 12),
-    body('folder').optional().isArray().withMessage('folder must be an Array'),
+    upload.array('files', 12),
+    body('folders').optional().isArray().withMessage('folder must be an Array'),
     body('userId', 'userId must not be empty').exists().notEmpty(),
     body('root').exists().notEmpty().withMessage('folderRoot must not be empty')
   ],

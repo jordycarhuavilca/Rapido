@@ -1,3 +1,3 @@
-export interface getUserByEmail{
+export interface getUserByEmailDto{
     email: string
 }

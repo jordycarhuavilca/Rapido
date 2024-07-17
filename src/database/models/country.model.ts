@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
-import country from '@interfaces/countries.interface'
 const { Schema } = mongoose;
 
+interface country{
+  name: string
+}
 
 const countryModel = new Schema<country>(
   {

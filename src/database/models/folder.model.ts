@@ -1,20 +1,20 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
-import { v4 as uuidv4 } from 'uuid';
 import { typeObject } from '@utils/object'
 interface folder {
-  id: uuidv4;
+  id: string;
   name: string;
   size: string;
   numFiles: number;
   location: string;
   type: string;
-  objects?: any;
+  objects: any;
   userId: string;
 }
 
 const folderModel = new Schema<folder>(
   {
+    id: String,
     name: String,
     size: {
       type: String,
@@ -39,7 +39,8 @@ const folderModel = new Schema<folder>(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
   }
 );
 
