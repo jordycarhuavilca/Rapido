@@ -14,7 +14,7 @@ export class Folder extends Objecto {
   private numFiles: number;
   private objects: Array<Folder | File | []>;
   private static count = 0;
-  private static folderLocation: string = 'nube';
+  private static folderLocation: string = 'root';
   constructor(
     name: string,
     size: string,
@@ -35,7 +35,9 @@ export class Folder extends Objecto {
       folder: {
         name: null as string | null,
         location: null as string | null,
-        id: null as string | null
+        id: null as string | null,
+        size: '0' as string,
+        numFiles: 0 as number
       },
       file: null as File | null
     }
@@ -52,8 +54,8 @@ export class Folder extends Objecto {
     this.objects.push(
       new Folder(
         folder.name,
-        '0',
-        0,
+        folder.size,
+        folder.numFiles,
         Folder.folderLocation,
         typeObject.FOLDER,
         this.userIdValue,
@@ -67,9 +69,15 @@ export class Folder extends Objecto {
     Folder.folderLocation = '';
   }
   private increaseSize(value: Folder | File) {
+    console.log(`incoming value ${value.sizeValue}`);
+    console.log(
+      `Current Folder value: ${this.sizeValue} - name: ${this.nameValue}`
+    );
+
     this.sizeValue = (
       Number(this.sizeValue) + Number(value.sizeValue)
     ).toString();
+    console.log(`Current Folder result ${this.sizeValue}`);
   }
   private increaseNumberFiles() {
     this.numFiles++;
@@ -78,7 +86,13 @@ export class Folder extends Objecto {
     Folder.count += 1;
   }
   public async process(value: Folder | File) {
-    console.log(`process ${value}`);
+    this.increaseSize(value);
+    this.increaseNumberFiles();
+    console.log(`process `, {
+      value,
+      currentFolderSize: this.sizeValue,
+      this: this
+    });
     if (!value?.nameValue) {
       throw new Error("Object doesn't exist");
     }
@@ -98,30 +112,40 @@ export class Folder extends Objecto {
       console.log('isRepeated ' + isRepeated);
       if (isRepeated) throw new Error(' folder or file name must be unique');
 
-      this.increaseSize(value);
-      const res = this.addObjectToFolder({
+      this.addObjectToFolder({
         attributes: {
-          folder: { location: null, name: null, id: value.idValue },
+          folder: {
+            location: null,
+            name: null,
+            id: value.idValue,
+            size: '0',
+            numFiles: 0
+          },
           file: value
         }
       });
       this.restart();
-      return res;
+      return;
     }
     if (Folder.count >= limit && value instanceof Folder) {
       const isRepeated = this.findRepeatedObjects(typeObject.FOLDER, objName);
       console.log('isRepeated ' + isRepeated);
       if (isRepeated) throw new Error(' folder or file name must be unique');
 
-      this.increaseNumberFiles();
-      const res = this.addObjectToFolder({
+      this.addObjectToFolder({
         attributes: {
-          folder: { location: '', name: objName, id: value.idValue },
+          folder: {
+            location: '',
+            name: objName,
+            id: value.idValue,
+            size: '0',
+            numFiles: 0
+          },
           file: null
         }
       });
       this.restart();
-      return res;
+      return;
     }
     console.log(`count ${Folder.count}`);
 
@@ -131,7 +155,13 @@ export class Folder extends Objecto {
       this.increaseNumberFiles();
       this.addObjectToFolder({
         attributes: {
-          folder: { location: '', name: objName, id: value.idValue },
+          folder: {
+            location: '',
+            name: objName,
+            id: value.idValue,
+            size: '0',
+            numFiles: 0
+          },
           file: null
         }
       });
@@ -139,38 +169,53 @@ export class Folder extends Objecto {
 
     for (let i = 0; i < this.objects.length; i++) {
       const obj: any = { value: this.objects[i] as Folder | File };
-      console.log(`obj ${JSON.stringify(obj)}`);
-      if (obj.value?.type === typeObject.FILE) obj.value = setUpFile(obj.value);
-      if (obj.value?.type === typeObject.FOLDER)
-        obj.value = setUpFolder(obj.value);
+      console.log(`obj value again ${JSON.stringify(obj)}`);
+      // if (obj.value?.type === typeObject.FILE) obj.value = setUpFile(obj.value);
+      // if (obj.value?.type === typeObject.FOLDER)
+      //   obj.value = setUpFolder(obj.value);
       // miFolder
       // nube
 
       const { nameValue, typeValue } = obj.value;
       if (nameValue === objName && typeValue === typeObject.FOLDER) {
-        console.log('getting in the folder' + JSON.stringify(value));
-        this.increaseSize(value);
-        this.increaseNumberFiles();
+        console.log('getting in the folder', { folder: obj.value });
         this.increaseCount();
         obj.value.process(value);
       }
 
       const isRepeated = this.findRepeatedObjects(typeObject.FOLDER, objName);
-      console.log('isRepeated ' + isRepeated);
+      console.log('findRepeatedObjects.isRepeated ', {
+        this: this,
+        isRepeated,
+        classCount: Folder.count,
+        limit,
+        nexObject: obj.value
+      });
       if (isRepeated) continue;
+      console.log('Creating a new Object ', value);
+
       this.addObjectToFolder({
         attributes: {
-          folder: { location: '', name: objName, id: value.idValue },
+          folder: {
+            location: '',
+            name: objName,
+            id: value.idValue,
+            size: '0',
+            numFiles: 0
+          },
           file: null
         }
       });
     }
+
+    console.log('object.init ', this.objects);
+    console.log('objectsValue.init ', this.objectsValue);
   }
   private findRepeatedObjects(tipoObjeto: typeObject, objName: string) {
-    console.log('obj name ' + objName);
-    console.log('list objects ' + JSON.stringify(this.objects));
+    // console.log('obj name ' + objName);
+    // console.log('list objects ' + JSON.stringify(this.objects));
     const hashTable = getObjectsByType(this.objects, tipoObjeto);
-    console.log('hashTable ' + JSON.stringify(hashTable));
+    // console.log('hashTable ' + JSON.stringify(hashTable));
     return hashTable[objName] ? true : false;
   }
   get objectsValue() {
