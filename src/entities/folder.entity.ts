@@ -12,6 +12,7 @@ import { typeObject } from '@utils/object';
 
 export class Folder extends Objecto {
   private numFiles: number;
+  private numFolders: number;
   private objects: Array<Folder | File | []>;
   private static count = 0;
   private static folderLocation: string = 'root';
@@ -19,6 +20,7 @@ export class Folder extends Objecto {
     name: string,
     size: string,
     numFiles: number,
+    numFolders: number,
     location: string,
     type: typeObject,
     userId: string,
@@ -28,21 +30,25 @@ export class Folder extends Objecto {
     updatedDate?: Date
   ) {
     super(name, size, location, type, userId, id, creationDate, updatedDate);
-    (this.numFiles = numFiles), (this.objects = objects);
+    (this.numFiles = numFiles),
+      (this.objects = objects),
+      (this.numFolders = numFolders);
   }
   private addObjectToFolder({
     attributes = {
       folder: {
         name: null as string | null,
         location: null as string | null,
-        id: null as string | null,
-        size: '0' as string,
-        numFiles: 0 as number
+        id: null as string | null
       },
       file: null as File | null
     }
   } = {}) {
     const { file, folder } = attributes;
+
+    console.log(`addObjectToFolder.file `, file);
+    console.log(`addObjectToFolder.folder `, folder);
+
     if (file) {
       this.objects.push(file);
       return;
@@ -51,11 +57,14 @@ export class Folder extends Objecto {
     console.log(`ìd ${folder.id}`);
     const id = folder.id ? folder.id : GeneratedId.ObjectId();
     console.log(`ìd2 ${id}`);
+    const initValue = 0;
+
     this.objects.push(
       new Folder(
         folder.name,
-        folder.size,
-        folder.numFiles,
+        initValue.toString(),
+        initValue,
+        initValue,
         Folder.folderLocation,
         typeObject.FOLDER,
         this.userIdValue,
@@ -82,12 +91,18 @@ export class Folder extends Objecto {
   private increaseNumberFiles() {
     this.numFiles++;
   }
+  private increaseNumberFolders() {
+    this.numFolders++;
+  }
   private increaseCount() {
     Folder.count += 1;
   }
   public async process(value: Folder | File) {
     this.increaseSize(value);
+    if (value instanceof Folder) this.increaseNumberFolders();
+    if (value instanceof File) this.increaseNumberFiles();
     this.increaseNumberFiles();
+
     console.log(`process `, {
       value,
       currentFolderSize: this.sizeValue,
@@ -117,9 +132,7 @@ export class Folder extends Objecto {
           folder: {
             location: null,
             name: null,
-            id: value.idValue,
-            size: '0',
-            numFiles: 0
+            id: value.idValue
           },
           file: value
         }
@@ -137,9 +150,7 @@ export class Folder extends Objecto {
           folder: {
             location: '',
             name: objName,
-            id: value.idValue,
-            size: '0',
-            numFiles: 0
+            id: value.idValue
           },
           file: null
         }
@@ -152,15 +163,13 @@ export class Folder extends Objecto {
     const isEmptyInsideFolder = this.objects.length === 0;
     if (isEmptyInsideFolder) {
       console.log('add the first time');
-      this.increaseNumberFiles();
+      this.increaseNumberFolders();
       this.addObjectToFolder({
         attributes: {
           folder: {
             location: '',
             name: objName,
-            id: value.idValue,
-            size: '0',
-            numFiles: 0
+            id: value.idValue
           },
           file: null
         }
@@ -193,15 +202,13 @@ export class Folder extends Objecto {
       });
       if (isRepeated) continue;
       console.log('Creating a new Object ', value);
-
+      this.increaseNumberFolders();
       this.addObjectToFolder({
         attributes: {
           folder: {
             location: '',
             name: objName,
-            id: value.idValue,
-            size: '0',
-            numFiles: 0
+            id: value.idValue
           },
           file: null
         }

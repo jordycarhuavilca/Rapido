@@ -6,6 +6,7 @@ interface folder {
   name: string;
   size: string;
   numFiles: number;
+  numFolders: number;
   location: string;
   type: string;
   objects: any;
@@ -21,6 +22,10 @@ const folderModel = new Schema<folder>(
       required: true
     },
     numFiles: {
+      type: Number,
+      default: 0
+    },
+    numFolders: {
       type: Number,
       default: 0
     },
